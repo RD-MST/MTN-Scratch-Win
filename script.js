@@ -103,46 +103,38 @@ function updateCityElements(city) {
 // Winners Section
 // ═══════════════════════════════════════════════════════════════════
 
-const winnerPrizes = ['₦3,000', '₦5,000', '₦10,000'];
-const winnerTimes = ['2 hours ago', '5 hours ago', '8 hours ago'];
+// Фиксированные 3 победителя
+const fixedWinners = [
+    { name: 'Chidi', city: 'Lagos', prize: '₦10,000', time: '2 hours ago', image: 'photo1.png' },
+    { name: 'Ngozi', city: 'Lagos', prize: '₦5,000', time: '5 hours ago', image: 'photo2.png' },
+    { name: 'Adewale', city: 'Lagos', prize: '₦3,000', time: '8 hours ago', image: 'photo3.png' }
+];
 
 function updateWinners(city) {
     const winnersGrid = document.getElementById('winners-grid');
     if (!winnersGrid) return;
     
-    const cityNames = names[city] || names['Nigeria'];
-    
-    // Создаём 3 случайных победителя из имён города
-    const selectedNames = [];
-    while (selectedNames.length < 3) {
-        const randomName = cityNames[Math.floor(Math.random() * cityNames.length)];
-        if (!selectedNames.includes(randomName)) {
-            selectedNames.push(randomName);
-        }
-    }
-    
     winnersGrid.innerHTML = '';
     
-    selectedNames.forEach((name, index) => {
+    fixedWinners.forEach((winner) => {
         const winnerCard = document.createElement('div');
         winnerCard.className = 'winner-card';
         
-        const initial = name.charAt(0).toUpperCase();
-        const prize = winnerPrizes[index];
-        const time = winnerTimes[index];
-        
-        // Создаём фамилию (первая буква имени + случайная буква)
+        const initial = winner.name.charAt(0).toUpperCase();
         const lastNameInitial = String.fromCharCode(65 + Math.floor(Math.random() * 26));
         
         winnerCard.innerHTML = `
-            <div class="winner-avatar">${initial}</div>
+            <div class="winner-avatar-wrapper">
+                <img src="images/${winner.image}" alt="${winner.name}" class="winner-avatar" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div class="winner-avatar-fallback" style="display:none;">${initial}</div>
+            </div>
             <div class="winner-info">
-                <h3 class="winner-name">${name} ${lastNameInitial}.</h3>
-                <p class="winner-location">${city}, Nigeria</p>
+                <h3 class="winner-name">${winner.name} ${lastNameInitial}.</h3>
+                <p class="winner-location">${winner.city}, Nigeria</p>
             </div>
             <div class="winner-prize">
-                <span class="winner-amount">${prize}</span>
-                <span class="winner-time">${time}</span>
+                <span class="winner-amount">${winner.prize}</span>
+                <span class="winner-time">${winner.time}</span>
             </div>
         `;
         
@@ -301,6 +293,13 @@ function createScratchCard(index, prize) {
             imageData.data[i + 2] = Math.max(0, Math.min(255, imageData.data[i + 2] + noise));
         }
         ctx.putImageData(imageData, 0, 0);
+        
+        // Добавляем текст "SCRATCH HERE"
+        ctx.fillStyle = '#333333';
+        ctx.font = 'bold 10px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('SCRATCH HERE', canvas.width / 2, canvas.height / 2);
     }
     
     // Инициализируем canvas после добавления в DOM
